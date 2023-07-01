@@ -3,12 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import { connectToDatabase } from "@utils/database";
 import User from "@models/user";
 
-// console.table({
-//   GOOGLE_ID: process.env.GOOGLE_ID,
-//   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-//   MONGODB_URI: process.env.MONGODB_DB_URI,
-//   MONGODB_DB_NAME: process.env.MONGODB_DB_NAME,
-// });
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -18,15 +12,17 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session }) {
+      if (!session || !session.user) return session;
       const sessionUser = await User.findOne({
-        email: session.user.email,
+        email: session?.user?.email,
       });
-
       session.user.id = sessionUser._id.toString();
       return session;
     },
     async signIn({ profile }) {
       try {
+        console.log(profile);
+        if (!profile?.email) return false;
         await connectToDatabase();
 
         const userExists = await User.findOne({ email: profile.email });
@@ -34,7 +30,7 @@ const handler = NextAuth({
           await User.create({
             email: profile.email,
             userName: profile?.name?.replace(" ", "").toLowerCase(),
-            image: profile.image,
+            image: profile.picture,
           });
         }
         return true;

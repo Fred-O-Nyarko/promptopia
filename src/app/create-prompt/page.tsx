@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +18,7 @@ const CreatePrompt = () => {
   const [submitting, setIsSubmitting] = useState(false);
   const [post, setPost] = useState<PostProps>({ prompt: "", tag: "" });
 
-  const createPrompt = async (e) => {
+  const createPrompt = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 

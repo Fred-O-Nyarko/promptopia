@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent } from "react";
-import PromptCard, { Prompt } from "./PromptCard";
-
-interface PromptCardProps {}
+import PromptCard from "./PromptCard";
+import { Post } from "@types";
 
 const PromptCardList = ({
   data,
   handleTagClick,
 }: {
-  data: Prompt[];
+  data: Post[];
   handleTagClick: (tag: string) => void;
 }) => {
   return (
@@ -28,14 +27,14 @@ const PromptCardList = ({
 };
 
 const Feed = () => {
-  const [allPosts, setAllPosts] = useState<Prompt[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
 
   // Search states
   const [searchText, setSearchText] = useState("");
   const [searchTimeoutId, setSearchTimeoutId] = useState<NodeJS.Timeout | null>(
     null
   );
-  const [searchedResults, setSearchedResults] = useState<Prompt[]>([]);
+  const [searchedResults, setSearchedResults] = useState<Post[]>([]);
 
   const fetchPosts = async () => {
     const response = await fetch("/api/prompt");
@@ -52,7 +51,7 @@ const Feed = () => {
     const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
     return allPosts.filter(
       (item) =>
-        regex.test(item.creator.username) ||
+        regex.test(item.creator.userName) ||
         regex.test(item.tag) ||
         regex.test(item.prompt)
     );

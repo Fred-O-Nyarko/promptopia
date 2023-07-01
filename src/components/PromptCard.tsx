@@ -4,20 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import { Post } from "@types";
 
-export type Prompt = {
-  _id: string;
-  prompt: string;
-  tag: string;
-  creator: {
-    _id: string;
-    username: string;
-    image: string;
-    email: string;
-  };
-};
 export interface PromptCardProps {
-  post: Prompt;
+  post: Post;
   handleTagClick: (tag: string) => void;
   handleDelete: () => void;
   handleEdit: () => void;
@@ -35,11 +25,9 @@ const PromptCard = ({
   const [copied, setCopied] = useState("");
 
   const handleProfileClick = () => {
-    console.log(post);
-
     if (post.creator._id === session?.user?.id) return router.push("/profile");
 
-    router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
+    router.push(`/profile/${post.creator._id}?name=${post.creator.userName}`);
   };
 
   const handleCopy = () => {
@@ -47,6 +35,7 @@ const PromptCard = ({
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(""), 3000);
   };
+  if (!post) return null;
 
   return (
     <div className="prompt_card">
@@ -65,7 +54,7 @@ const PromptCard = ({
 
           <div className="flex flex-col">
             <h3 className="font-satoshi font-semibold text-gray-900">
-              {post.creator.username}
+              {post.creator.userName}
             </h3>
             <p className="font-inter text-sm text-gray-500">
               {post.creator.email}
